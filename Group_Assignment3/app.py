@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, redirect
 from flask_sqlalchemy import SQLAlchemy
 import pymysql
 pymysql.install_as_MySQLdb()
+
 from flask_login import UserMixin, login_user, LoginManager, login_required, logout_user, current_user
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
@@ -13,22 +14,25 @@ import pickle
 
 app = Flask(__name__, template_folder='templates')
 app.app_context().push()
+
 model = pickle.load(open('model.pkl', 'rb')) 
 
 ENV = 'dev'
 app.debug = True
+## from database
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:2898liki@localhost:3306/login_store'
 app.config['SECRET_KEY'] = 'giveanysceretkey'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
-## for managing our application and Flask_login to work together
+## managing our application and Flask_login to work together
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-## To reload the objects from the user_ids stored in the session
+## reload the objects from the user_id
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -93,7 +97,7 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
-## hashing the password is optional for the learners
+## hashing the password
 @ app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegisterForm()
@@ -107,8 +111,8 @@ def register():
 
     return render_template('register.html', form=form)
 
-
-@app.route('/enter_details') ## for entering details
+## for entering details
+@app.route('/enter_details') 
 def enter_details():
     return render_template('predict.html')
 
