@@ -122,7 +122,7 @@ def predict():
     prediction = model.predict(final_features)
 
     if prediction==0:
-        return render_template('predict.html', prediction_text='Sorry:( you are not eligible for the loan ')
+        return render_template('predict.html', prediction_text='Sorry:( you are not eligible for the loan )')
     else:
         return render_template('predict.html', prediction_text='Congrats!! you are eligible for the loan')
 
